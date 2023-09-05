@@ -30,7 +30,7 @@ export default function Login() {
             <BackgroundImage />
             <div className="content">
                 <Header />
-                <div className="form-container flex-column a-center j-center">
+                <div className="form-container flex column a-center j-center">
                     <div className="form flex column a-center j-center">
                         <div className="title">
                             <h3>Login</h3>
@@ -49,8 +49,6 @@ export default function Login() {
                                     })
                                 }
                             />
-
-
                             <input
                                 type="password"
                                 name="password"
@@ -64,7 +62,7 @@ export default function Login() {
                                     })
                                 }
                             />
-                            <button onClick={handleLogIn()}>Log In</button>
+                            <button onClick={handleLogIn}>Log In</button>
                             
                         </div>
                     </div>
@@ -85,47 +83,33 @@ const Container = styled.div`
         width: 100vw;
         display: grid;
         grid-template-rows: 15vh 85vh;
-        .body{
-            gap: 1rem;
-            text-align: center;
-            font-size: 2rem;
-            h1{
-                padding: 0 25rem;
-            }
-        }
-        .form{
-            display: grid;
-            grid-template-columns: ${({ showPassword }) => showPassword ? "1fr 1fr" : "2fr 1fr"};
-            width: 60%;
-            input{
-                color: black;
-                border: none;
-                padding:1.5rem;
-                font-size: 1.2rem;
-                border: 1px solid black;
-                &:focus {
-                    outline: none;
+        .form-container{
+            gap: 2rem;
+            height: 85vh;
+            .form{
+                padding: 2rem;
+                background-color: #000000b0;
+                width: 25vw;
+                gap: 2rem;
+                color: white;
+                .container{
+                    gap: 2rem;
+                    input{
+                        padding: 0.5rem 1rem;
+                        width: 15rem;
+                    }
+                    button{
+                        padding: 0.5rem 1rem;
+                        background-color: #e50914;
+                        border: none;
+                        cursor: pointer;
+                        color: white;
+                        border-radius: 0.2rem;
+                        font-weight: bolder;
+                        font-size: 1.05rem;
+                    }
                 }
             }
-            button{
-                padding: 0.5rem 1rem;
-                background-color: #e50914;
-                border: none;
-                cursor: pointer;
-                color: white;
-                font-weight: bolder;
-                font-size: 1.05rem;
-            }
-        }
-        button{
-            padding: 0.5rem 1rem;
-            background-color: #e50914;
-            border: none;
-            cursor: pointer;
-            color: white;
-            border-radius: 0.2rem;
-            font-weight: bolder;
-            font-size: 1.05rem;
         }
     }
 `;
