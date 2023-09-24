@@ -16,43 +16,43 @@ export const getGenres = createAsyncThunk("netflix/genres", async () => {
     return genres;
 });
 
-const createArrayFromRawData = (array,moviesArray,genres)=>{
+const createArrayFromRawData = (array, moviesArray, genres) => {
     if (!Array.isArray(array)) {
         // Handle the case where 'array' is not an array
         //console.error("'array' is not an array");
         return;
     }
-    array.forEach((movie)=>{
+    array.forEach((movie) => {
         const movieGenres = [];
-        movie.genre_ids.forEach((genre)=>{
-            const name = genres.find(({id})=>id===genre);
-            if(name) movieGenres.push(name.name);
+        movie.genre_ids.forEach((genre) => {
+            const name = genres.find(({ id }) => id === genre);
+            if (name) movieGenres.push(name.name);
         });
-        if(movie.backdrop_path){
+        if (movie.backdrop_path) {
             moviesArray.push({
                 id: movie.id,
-                name: movie?.original_name ? movie.original_name: movie.original_title,
+                name: movie?.original_name ? movie.original_name : movie.original_title,
                 image: movie.backdrop_path,
-                genres: movieGenres.slice(0,3)
+                genres: movieGenres.slice(0, 3)
             });
         }
     });
 }
 
-const getRawData = async (api,genres,paging) => {
+const getRawData = async (api, genres, paging) => {
     const moviesArray = [];
-    for(let i=1; moviesArray.length<60 && i < 10; i++){
-       const {data: {results}} =  await axios.get(`${api}${paging?`&page=${i}`:""}`);
-       createArrayFromRawData(results,moviesArray,genres);
+    for (let i = 1; moviesArray.length < 60 && i < 10; i++) {
+        const { data: { results } } = await axios.get(`${api}${paging ? `&page=${i}` : ""}`);
+        createArrayFromRawData(results, moviesArray, genres);
     }
     return moviesArray;
 }
 
 export const fetchMovies = createAsyncThunk(
-    "netflix/trending", 
+    "netflix/trending",
     async ({ type }, thunkApi) => {
-        const { 
-            netflix: {genres},
+        const {
+            netflix: { genres },
         } = thunkApi.getState();
         return getRawData(
             `${TMDB_BASE_URL}/trending/${type}/week?api_key=${API_KEY}`,
@@ -63,15 +63,36 @@ export const fetchMovies = createAsyncThunk(
 );
 
 export const fetchDataByGenre = createAsyncThunk(
-    "netflix/moviesByGenres", 
-    async ({genre, type }, thunkApi) => {
-        const { 
-            netflix: {genres},
+    "netflix/moviesByGenres",
+    async ({ genre, type }, thunkApi) => {
+        const {
+            netflix: { genres },
         } = thunkApi.getState();
-        return getRawData(
+        const data = getRawData(
             `${TMDB_BASE_URL}/discover/${type}?api_key=${API_KEY}&with_genres=${genre}`,
             genres
         );
+        return data;
+    }
+);
+
+export const getUserLikedMovies = createAsyncThunk(
+    "netflix/getLiked", 
+    async (email) => {
+        const { 
+            data: { movies }
+        } = await axios.get(`http://localhost:5000/api/user/liked/${email}`);
+        return movies;
+    }
+);
+
+export const removeFromLikedMovies = createAsyncThunk(
+    "netflix/deleteLiked", 
+    async ({email,movieId}) => {
+        const { 
+            data: { movies }
+        } = await axios.put(`http://localhost:5000/api/user/delete`, {email,movieId});
+        return movies;
     }
 );
 
@@ -87,6 +108,12 @@ const NetflixSlice = createSlice({
             state.movies = action.payload;
         });
         builder.addCase(fetchDataByGenre.fulfilled, (state, action) => {
+            state.movies = action.payload;
+        });
+        builder.addCase(getUserLikedMovies.fulfilled, (state, action) => {
+            state.movies = action.payload;
+        });
+        builder.addCase(removeFromLikedMovies.fulfilled, (state, action) => {
             state.movies = action.payload;
         });
     }
