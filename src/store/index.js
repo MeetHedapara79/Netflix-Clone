@@ -1,7 +1,7 @@
 import { configureStore, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_KEY, TMDB_BASE_URL } from "../utils/constants";
-import { generatePath } from "react-router-dom";
+require('dotenv').config();
 
 const initialState = {
     movies: [],
@@ -81,7 +81,7 @@ export const getUserLikedMovies = createAsyncThunk(
     async (email) => {
         const { 
             data: { movies }
-        } = await axios.get(`http://localhost:5000/api/user/liked/${email}`);
+        } = await axios.get(`process.env.BASE_URL/api/user/liked/${email}`);
         return movies;
     }
 );
@@ -91,7 +91,7 @@ export const removeFromLikedMovies = createAsyncThunk(
     async ({email,movieId}) => {
         const { 
             data: { movies }
-        } = await axios.put(`http://localhost:5000/api/user/delete`, {email,movieId});
+        } = await axios.put(`process.env.BASE_URL/api/user/delete`, {email,movieId});
         return movies;
     }
 );

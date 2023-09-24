@@ -12,6 +12,7 @@ import axios from 'axios';
 import { firebaseAuth } from '../utils/firebase-config';
 import { useDispatch } from 'react-redux';
 import { removeFromLikedMovies } from '../store';
+require('dotenv').config();
 
 export default React.memo(
     function Card({ movieData, isLiked = false }) {
@@ -27,7 +28,7 @@ export default React.memo(
 
         const addToList = async () =>{
             try{
-                await axios.post("http://localhost:5000/api/user/add", {email, data: movieData})
+                await axios.post("process.env.BASE_URL/api/user/add", {email, data: movieData})
             }catch(err){
                 console.log(err);
             }
